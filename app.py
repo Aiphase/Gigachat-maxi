@@ -22,6 +22,33 @@ giga = GigaChat(credentials=api_key,
                 scope='GIGACHAT_API_PERS',
                 profanity_check=False
                 )
+}
+
+@app.route('/process', methods=['POST'])
+def process_request():
+    try:
+        # Получение данных от фронтенда
+        data = request.json
+        user_input = data.get("text", "")
+
+        # Формируем запрос к GigaChat API
+        payload = {
+            "message": user_input,
+            "parameters": {
+                "temperature": 0.7,
+                "max_length": 200
+            }
+        }
+
+        # Отправляем запрос к GigaChat
+        response = requests.post(GIGACHAT_API_URL, headers=HEADERS, json=payload)
+        response.raise_for_status()
+
+        # Возвращаем ответ от GigaChat клиенту
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @tool
 def get_papers(query: str, n: int) -> str:
@@ -287,5 +314,5 @@ template=_DEFAULT_KNOWLEDGE_TRIPLE_EXTRACTION_TEMPLATE,
 
 chain = LLMChain(llm=giga, prompt=KNOWLEDGE_TRIPLE_EXTRACTION_PROMPT)
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
