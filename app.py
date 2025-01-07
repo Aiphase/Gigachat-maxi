@@ -17,9 +17,9 @@ from langchain_community.document_loaders import UnstructuredFileLoader
 api_key = os.getenv("SBER")
 
 giga = GigaChat(credentials=api_key,
-                model='GigaChat-Pro-preview',
+                model='GigaChat-Max',
                 verify_ssl_certs=False,
-                scope='GIGACHAT_API_CORP',
+                scope='GIGACHAT_API_PERS',
                 profanity_check=False
                 )
 
